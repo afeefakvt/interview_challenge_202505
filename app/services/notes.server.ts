@@ -1,5 +1,5 @@
 import { db, notes, type Note, type NewNote } from "~/db/schema";
-import { sql,eq,and } from "drizzle-orm";
+import { sql,eq, desc } from "drizzle-orm";
 
 export async function createNote(data: NewNote): Promise<Note> {
   const [note] = await db.insert(notes).values(data).returning();
@@ -31,7 +31,10 @@ export async function getNotesByUserId(
     .select()
     .from(notes)
     .where(eq(notes.userId, userId))
-    .orderBy(notes.createdAt)
+    .orderBy(
+      desc(notes.isFavorite),    
+      desc(notes.createdAt) 
+    )
     .limit(limit)
     .offset(offset);
 
