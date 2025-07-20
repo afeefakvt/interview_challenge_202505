@@ -26,11 +26,17 @@ import {
 import { Separator } from "~/components/ui/separator";
 import { noteSchema } from "~/schemas/notes";
 import { NotesGridSkeleton } from "~/components/notes/note-skeleton";
+import NotesPagination from "~/components/notes/pagination";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const userId = await requireUserId(request);
-  const { notes } = await getNotesByUserId(userId);
-  return json({ notes });
+ const userId = await requireUserId(request);
+  const url = new URL(request.url);
+  const page = parseInt(url.searchParams.get("page") || "1", 10);
+  const limit = 10;
+
+  const { notes, totalNotes, totalPages } = await getNotesByUserId(userId, page, limit);
+
+  return json({ notes, totalNotes, totalPages, currentPage: page });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -72,7 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function NotesIndexPage() {
-  const { notes } = useLoaderData<typeof loader>();
+  const { notes,totalPages,currentPage } = useLoaderData<typeof loader>();
   const [isOpen, setIsOpen] = useState(false);
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
@@ -139,6 +145,13 @@ export default function NotesIndexPage() {
           </Card>
         </div>
       </div>
+      {totalPages > 1 && (
+        <div className="flex justify-center">
+          <NotesPagination currentPage={currentPage} totalPages={totalPages} />
+        </div>
+      )}
     </div>
+    
+    
   );
 }
