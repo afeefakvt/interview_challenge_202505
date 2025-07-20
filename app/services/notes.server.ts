@@ -49,3 +49,20 @@ export async function deleteNote(id: number, userId: number): Promise<boolean> {
     .returning();
   return !!note;
 }
+
+export async function toggleFavorite(noteId:number,userId:number):Promise<Note | null>{
+  const [note] =await db
+  .select()
+  .from(notes)
+  .where(sql`${notes.id} = ${noteId} AND ${notes.userId} = ${userId}`);
+
+  if(!note) return null;
+
+  const [updateNote] = await db
+  .update(notes)
+  .set({isFavorite:!note.isFavorite})
+  .where(sql`${notes.id} = ${noteId} AND ${notes.userId} = ${userId}`)
+  .returning();
+
+  return updateNote || null;
+}
