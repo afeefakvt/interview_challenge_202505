@@ -6,9 +6,7 @@ export async function action({request}:ActionFunctionArgs){
     const formData = await request.formData();
     const noteId = Number(formData.get("noteId"));
     const userId = await requireUserId(request);
-
-    console.log(userId,"jhhdvdujshmn");
-    
+        
     if(!noteId || isNaN(noteId)){
         throw new Response("Invalid note ID",{status:400});
     }
