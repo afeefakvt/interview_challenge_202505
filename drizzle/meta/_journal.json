@@ -15,6 +15,13 @@
       "when": 1752910191513,
       "tag": "0001_eminent_lionheart",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753080411628,
+      "tag": "0002_worried_lady_deathstrike",
+      "breakpoints": true
     }
   ]
 }
