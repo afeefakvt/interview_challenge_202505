@@ -3,13 +3,13 @@ import {
   type LoaderFunctionArgs,
   type ActionFunctionArgs,
 } from "@remix-run/node";
-import { useLoaderData, useNavigation } from "@remix-run/react";
+import { useLoaderData, useNavigation,useActionData } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { NotesGrid } from "~/components/notes/notes-grid";
 import { NoteForm } from "~/components/notes/note-form";
 import { requireUserId } from "~/services/session.server";
 import { createNote, getNotesByUserId } from "~/services/notes.server";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { PlusIcon } from "@radix-ui/react-icons";
 import {
   Card,
@@ -85,7 +85,15 @@ export default function NotesIndexPage() {
   const { notes, totalPages, currentPage } = useLoaderData<typeof loader>();
   const [isOpen, setIsOpen] = useState(false);
   const navigation = useNavigation();
+  const actionData = useActionData<{ success: boolean }>();
   const isLoading = navigation.state === "loading";
+  const isSubmitting = navigation.state === "submitting";
+
+ useEffect(() => {
+    if (actionData?.success) {
+      setIsOpen(false);
+    }
+  }, [actionData]);
   // Reset the success handled flag when navigation change
   return (
     <div className="h-full min-h-screen bg-background">
@@ -121,16 +129,13 @@ export default function NotesIndexPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  disabled={isLoading}
+                  disabled={isLoading || isSubmitting}
                 >
                   Cancel
                 </Button>
               </CardHeader>
               <CardContent>
                 <NoteForm
-                  onSuccess={() => {
-                    setIsOpen(false);
-                  }}
                 />
               </CardContent>
             </Card>
