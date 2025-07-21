@@ -12,7 +12,7 @@ export default function NotesPagination({ currentPage, totalPages }: { currentPa
 
   return (
     <Pagination>
-      <PaginationContent>
+      <PaginationContent  className="flex flex-wrap justify-center gap-2" >
         {currentPage > 1 && (
           <PaginationItem>
             <PaginationPrevious href={getLink(currentPage - 1)} />
